@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Bloxd Schematics</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #e4d6bc 0%, #d4b483 100%);
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 20px;
+            color: white;
+            position: relative;
+        }
+        
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 10px;
+        }
+        
+        .title-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 10px;
+            overflow: hidden;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.3);
+            padding: 5px;
+        }
+        
+        .title-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            border-radius: 6px;
+        }
+        
+        .title-text {
+            text-align: left;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 5px;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            line-height: 1.2;
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            line-height: 1.4;
+        }
+        
+        .language-switcher {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+        }
+        
+        .lang-btn {
+            background: rgba(255, 255, 255, 0.3);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            padding: 8px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .lang-btn:hover {
+            background: rgba(255, 255, 255, 0.4);
+        }
+        
+        .sections-container {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+            margin-bottom: 100px;
+        }
+        
+        .section {
+            width: 100%;
+            height: 200px;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            display: flex;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+        
+        .section.active {
+            border: 3px solid #4CAF50;
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
+        }
+        
+        .section-img-container {
+            width: 280px;
+            height: 100%;
+            overflow: hidden;
+            flex-shrink: 0;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        
+        .section-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s;
+            border-radius: 8px;
+        }
+        
+        .section:hover .section-img {
+            transform: scale(1.05);
+        }
+        
+        .img-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            z-index: 10;
+        }
+        
+        .img-nav:hover {
+            background: rgba(0, 0, 0, 0.7);
+        }
+        
+        .img-nav.prev {
+            left: 20px;
+        }
+        
+        .img-nav.next {
+            right: 20px;
+        }
+        
+        .section-content {
+            padding: 25px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+        
+        .section-desc {
+            font-size: 1rem;
+            color: #7f8c8d;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+        
+        .section-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9rem;
+            color: #95a5a6;
+        }
+        
+        .file-size {
+            font-weight: 600;
+            color: #3498db;
+        }
+        
+        .download-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 120px;
+            height: 50px;
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(76, 175, 80, 0.4);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s;
+            z-index: 1000;
+        }
+        
+        .download-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(76, 175, 80, 0.6);
+        }
+        
+        .download-btn:active {
+            transform: scale(0.95);
+        }
+        
+        .download-btn.disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+            box-shadow: 0 5px 20px rgba(189, 195, 199, 0.4);
+        }
+        
+        .download-btn.disabled:hover {
+            transform: none;
+            box-shadow: 0 5px 20px rgba(189, 195, 199, 0.4);
+        }
+        
+        .notification {
+            position: fixed;
+            bottom: 120px;
+            right: 30px;
+            background: #2ecc71;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: 1000;
+        }
+        
+        .notification.show {
+            opacity: 1;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: rgba(255,255,255,0.7);
+            font-size: 0.9rem;
+            margin-top: 40px;
+        }
+        
+        /* 合并的内容区域 */
+        .content-area {
+            background: white;
+            border-radius: 12px;
+            padding: 30px; /* 调整内边距 */
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            margin-top: 25px;
+            /* 添加固定高度 */
+            min-height: 400px; /* 调整这个值来改变最小高度 */
+            height: auto; /* 或者设置为固定高度如 500px */
+			transition: all 0.3s ease;
+        }
+        
+		.content-area:hover {
+		    transform: translateY(-5px);
+		    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+		}
+		
+        .content-area h3 {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: #2c3e50;
+            border-bottom: 2px solid #f1f1f1;
+            padding-bottom: 10px;
+        }
+        
+        .content-layout {
+            display: flex;
+            gap: 25px;
+            align-items: flex-start;
+        }
+        
+        .screenshot {
+            flex: 0 0 280px;
+            height: 180px;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .text-content {
+            flex: 1;
+        }
+        
+        .text-content p {
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+        
+        .text-content a {
+            color: #3498db;
+            text-decoration: none;
+        }
+        
+        .text-content a:hover {
+            text-decoration: underline;
+        }
+        
+        .contact-logo {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 2px solid #d4b483;
+            margin-bottom: 15px;
+        }
+        
+        .contact-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        @media (max-width: 768px) {
+            .section {
+                height: auto;
+                flex-direction: column;
+            }
+            
+            .section-img-container {
+                width: 100%;
+                height: 200px;
+            }
+            
+            .section-content {
+                padding: 20px;
+            }
+            
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .title-text {
+                text-align: center;
+            }
+            
+            .content-layout {
+                flex-direction: column;
+            }
+            
+            .screenshot {
+                flex: 0 0 auto;
+                width: 100%;
+                max-width: 300px;
+                margin: 0 auto 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-content">
+                <div class="title-icon">
+                    <img src="img/bloxd-logo.png" alt="Bloxd图标">
+                </div>
+                <div class="title-text">
+                    <h1 id="main-title">My Bloxd Schematics</h1>
+                    <p class="subtitle" id="main-subtitle">Select the resources you need and click the download button to get the files</p>
+                </div>
+            </div>
+            <div class="language-switcher">
+                <button class="lang-btn" id="langBtn">EN</button>
+            </div>
+        </header>
+        
+        <div class="sections-container">
+            <div class="section" data-file="downloads3/Starter House.bloxdschem">
+                <div class="section-img-container">
+                    <button class="img-nav prev">&lt;</button>
+                    <img class="section-img" src="img/SH-1.png" alt="Starter House">
+                    <button class="img-nav next">&gt;</button>
+                </div>
+                <div class="section-content">
+                    <div>
+                        <div class="section-title">Starter House</div>
+                        <div class="section-desc">Builder: ImJanice/PhillixJanice_YT<br>Inspiration & Tutorial: bilibili-@Da_Guoran</div>
+                    </div>
+                    <div class="section-info">
+                        <span>With building and command blocks (Code from: YT-@Bluepandaiscool)</span>
+                        <span class="file-size">98 B</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="section" data-file="downloads3/Pumpkin House.bloxdschem">
+                <div class="section-img-container">
+                    <button class="img-nav prev">&lt;</button>
+                    <img class="section-img" src="img/PH-1.png" alt="Pumpkin House">
+                    <button class="img-nav next">&gt;</button>
+                </div>
+                <div class="section-content">
+                    <div>
+                        <div class="section-title">Pumpkin House</div>
+                        <div class="section-desc">Builder: ImJanice/PhillixJanice_YT<br>Inspiration & Tutorial: bilibili-@辉辉灰灰哥 & YT-@SheraNom</div>
+                    </div>
+                    <div class="section-info">
+                        <span>Building only</span>
+                        <span class="file-size">84 B</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="section" data-file="downloads3/Winter Cabin.bloxdschem">
+                <div class="section-img-container">
+                    <button class="img-nav prev">&lt;</button>
+                    <img class="section-img" src="img/WC-1.png" alt="Winter Cabin">
+                    <button class="img-nav next">&gt;</button>
+                </div>
+                <div class="section-content">
+                    <div>
+                        <div class="section-title">Winter Cabin</div>
+                        <div class="section-desc">Builder: ImJanice/PhillixJanice_YT<br>Inspiration & Tutorial: bilibili-@物语0077 & YT-@KoalaBuilds</div>
+                    </div>
+                    <div class="section-info">
+                        <span>With building and command blocks (Code from: YT-@Bluepandaiscool)</span>
+                        <span class="file-size">83 B</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="section" data-file="downloads3/Windmill.bloxdschem">
+                <div class="section-img-container">
+                    <button class="img-nav prev">&lt;</button>
+                    <img class="section-img" src="img/W-1.png" alt="Windmill">
+                    <button class="img-nav next">&gt;</button>
+                </div>
+                <div class="section-content">
+                    <div>
+                        <div class="section-title">Windmill</div>
+                        <div class="section-desc">Builder: ImJanice/PhillixJanice_YT & ImPhilli<br>Inspiration & Tutorial: bilibili-账号已注销 ea</div>
+                    </div>
+                    <div class="section-info">
+                        <span>Building only</span>
+                        <span class="file-size">79 B</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="section" data-file="downloads3/Camping Tent.bloxdschem">
+                <div class="section-img-container">
+                    <button class="img-nav prev">&lt;</button>
+                    <img class="section-img" src="img/CT-1.png" alt="Camping Tent">
+                    <button class="img-nav next">&gt;</button>
+                </div>
+                <div class="section-content">
+                    <div>
+                        <div class="section-title">Camping Tent</div>
+                        <div class="section-desc">Builder: ImJanice/PhillixJanice_YT<br>Inspiration & Tutorial: bilibili-@孔同学KKK</div>
+                    </div>
+                    <div class="section-info">
+                        <span>With building and command blocks (Code from: YT-@Bluepandaiscool)</span>
+                        <span class="file-size">82 B</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="section" data-file="downloads3/Tree House.bloxdschem">
+                <div class="section-img-container">
+                    <button class="img-nav prev">&lt;</button>
+                    <img class="section-img" src="img/TH-1.png" alt="Tree House">
+                    <button class="img-nav next">&gt;</button>
+                </div>
+                <div class="section-content">
+                    <div>
+                        <div class="section-title">Tree House</div>
+                        <div class="section-desc">Builder: ImJanice/PhillixJanice_YT<br>Inspiration & Tutorial: bilibili-@QY-kemi & YT-@polarcat22</div>
+                    </div>
+                    <div class="section-info">
+                        <span>Building only</span>
+                        <span class="file-size">81 B</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="section" data-file="downloads3/Cherry Blossom Pond.bloxdschem">
+                <div class="section-img-container">
+                    <button class="img-nav prev">&lt;</button>
+                    <img class="section-img" src="img/CP-1.png" alt="Cherry Blossom Pond">
+                    <button class="img-nav next">&gt;</button>
+                </div>
+                <div class="section-content">
+                    <div>
+                        <div class="section-title">Cherry Blossom Pond</div>
+                        <div class="section-desc">Builder: ImJanice/PhillixJanice_YT<br>Inspiration & Tutorial: bilibili-@雪島べま</div>
+                    </div>
+                    <div class="section-info">
+                        <span>Building only</span>
+                        <span class="file-size">90 B</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="content-area">
+                <h3 id="projectTitle">项目说明</h3>
+                <div class="content-layout">
+                    <div class="screenshot">
+                        <img src="img/pig.png" alt="项目截图" style="width: 100%; height: 100%; object-fit: cover; border-radius: 6px;">
+                    </div>
+                    <div class="text-content">
+                        <p id="projectText1"><strong>•</strong> 大部分建筑都是我看教程建的（但是有些地方是我自己改了）。 :3<br>
+                        <strong>•</strong> 如果你需要可以直接下载蓝图，但是用这些建筑记得艾特/@我，谢谢</p>
+                        <p><small id="projectText2">制作这个网站用了Deepseek :P</small></p>
+                    </div>
+                </div>
+            <div class="content-area" style="min-height: 80px; padding: 20px; position: relative;">
+                <div style="position: absolute; top: 15px; right: 15px; width: 40px; height: 40px; border-radius: 8px; overflow: hidden; border: 2px solid #d4b483;">
+                    <img src="img/logo.png" alt="联系Logo" style="width: 100%; height: 100%; object-fit: cover;">
+                </div>
+                        
+                <div class="text-content">
+                    <p id="contactText1">如果你想关注我，可以在这里找到我：</p>
+                    <p id="contactText2">
+                        <strong>油管:</strong> <a href="https://www.youtube.com/@PhillixJanice_YT" target="_blank">https://www.youtube.com/@PhillixJanice_YT</a><br>
+                        <strong>B站(bilibili):</strong> <a href="https://space.bilibili.com/3493078547564755?spm_id_from=333.1007.0.0" target="_blank">https://space.bilibili.com/3493078547564755?spm_id_from=333.1007.0.0</a><br>
+            			<strong>微信视频号:</strong> @蓝色de许愿星吖
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <button class="download-btn disabled" id="downloadBtn" title="Download Selected File">
+            <span id="download-text">Download</span>
+        </button>
+        
+        <div class="notification" id="notification">
+            File download started!
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const sections = document.querySelectorAll('.section');
+            const downloadBtn = document.getElementById('downloadBtn');
+            const notification = document.getElementById('notification');
+            const langBtn = document.getElementById('langBtn');
+            const downloadText = document.getElementById('download-text');
+            const mainTitle = document.getElementById('main-title');
+            const mainSubtitle = document.getElementById('main-subtitle');
+            
+            let selectedFile = null;
+            let currentLanguage = 'zh'; // 默认中文
+            
+            // 语言配置
+            const translations = {
+                'zh': {
+                    'title': '我的Bloxd蓝图',
+                    'subtitle': '选择您需要的蓝图，然后点击下载按钮获取文件',
+                    'download': '下载',
+                    'downloadTitle': '下载选中的文件',
+                    'notification': '文件下载已开始！',
+                    'projectTitle': '项目说明',
+                    'projectText1': '<strong>•</strong> 大部分建筑都是我看教程建的（但是有些地方是我自己改了）。 :3<br><strong>•</strong> 如果你需要可以直接下载蓝图，但是用这些建筑记得艾特/@我，谢谢。',
+                    'projectText2': '制作这个网站用了Deepseek :P',
+                    'contactText1': '如果你想关注我，可以在这里找到我：',
+                    'contactText2': '<strong>油管:</strong> <a href="https://www.youtube.com/@PhillixJanice_YT" target="_blank">https://www.youtube.com/@PhillixJanice_YT</a><br><strong>B站(bilibili):</strong> <a href="https://space.bilibili.com/3493078547564755?spm_id_from=333.1007.0.0" target="_blank">https://space.bilibili.com/3493078547564755?spm_id_from=333.1007.0.0</a><br><strong>微信视频号:</strong> @蓝色de许愿星吖',
+                    'sections': [
+                        {
+                            'title': '新手小屋',
+                            'desc': '建造者: ImJanice/PhillixJanice_YT<br>灵感&教程: bilibili-@Da_Guoran<br>',
+                            'info': '有建筑和命令方块 (代码来源于: YT-@Bluepandaiscool)'
+                        },
+                        {
+                            'title': '南瓜屋',
+                            'desc': '建造者: ImJanice/PhillixJanice_YT<br>灵感&教程: bilibili-@辉辉灰灰哥 & YT-@SheraNom',
+                            'info': '只有建筑'
+                        },
+                        {
+                            'title': '冬季小屋',
+                            'desc': '建造者: ImJanice/PhillixJanice_YT<br>灵感&教程: bilibili-@物语0077 & YT-@KoalaBuilds',
+                            'info': '有建筑和命令方块 (代码来源于: YT-@Bluepandaiscool)'
+                        },
+                        {
+                            'title': '风车',
+                            'desc': '建造者: ImJanice/PhillixJanice_YT & ImPhilli<br>灵感&教程: bilibili-账号已注销 ea',
+                            'info': '只有建筑'
+                        },
+                        {
+                            'title': '野营帐篷',
+                            'desc': '建造者: ImJanice/PhillixJanice_YT<br>灵感&教程: bilibili-@孔同学KKK',
+                            'info': '有建筑和命令方块 (代码来源于: YT-@Bluepandaiscool)'
+                        },
+                        {
+                            'title': '树屋',
+                            'desc': '建造者: ImJanice/PhillixJanice_YT<br>灵感&教程: bilibili-@QY-kemi & YT-@polarcat22',
+                            'info': '只有建筑'
+                        },
+                        {
+                            'title': '樱花树池塘',
+                            'desc': '建造者: ImJanice/PhillixJanice_YT<br>灵感&教程: bilibili-@雪島べま',
+                            'info': '只有建筑'
+                        },
+                    ]
+                },
+                'en': {
+                    'title': 'My Bloxd Schematics',
+                    'subtitle': 'Select the schematics you need and click the download button to get the files',
+                    'download': 'Download',
+                    'downloadTitle': 'Download Selected File',
+                    'notification': 'File download started!',
+                    'projectTitle': 'Project Description',
+                    'projectText1': '<strong>•</strong> Most buildings were built by me following tutorials (but I modified some parts myself).<br><strong>•</strong> If you need them, you can directly download the schematics, but please give me credit when using these buildings, thank you.  :3',
+                    'projectText2': 'This website was made with Deepseek :P',
+                    'contactText1': 'If you want to follow me, you can find me here:',
+                    'contactText2': '<strong>YouTube:</strong> <a href="https://www.youtube.com/@PhillixJanice_YT" target="_blank">https://www.youtube.com/@PhillixJanice_YT</a><br><strong>Bilibili:</strong> <a href="https://space.bilibili.com/3493078547564755?spm_id_from=333.1007.0.0" target="_blank">https://space.bilibili.com/3493078547564755?spm_id_from=333.1007.0.0</a><br><strong>WeChat Video Channel:</strong> @蓝色de许愿星吖',
+                    'sections': [
+                        {
+                            'title': 'Starter House',
+                            'desc': 'Builder: ImJanice/PhillixJanice_YT<br>Inspiration & Tutorial: bilibili-@Da_Guoran',
+                            'info': 'With building and code blocks (Code from: YT-@Bluepandaiscool)'
+                        },
+                        {
+                            'title': 'Pumpkin House',
+                            'desc': 'Builder: ImJanice/PhillixJanice_YT<br>Inspiration & Tutorial: bilibili-@辉辉灰灰哥 & YT-@SheraNom',
+                            'info': 'Building only'
+                        },
+                        {
+                            'title': 'Winter Cabin',
+                            'desc': 'Builder: ImJanice/PhillixJanice_YT<br>Inspiration & Tutorial: bilibili-@物语0077 & YT-@KoalaBuilds',
+                            'info': 'With building and code blocks (Code from: YT-@Bluepandaiscool)'
+                        },
+                        {
+                            'title': 'Windmill',
+                            'desc': 'Builder: ImJanice/PhillixJanice_YT & ImPhilli<br>Inspiration & Tutorial: bilibili-账号已注销 ea',
+                            'info': 'Building only'
+                        },
+                        {
+                            'title': 'Camping Tent',
+                            'desc': 'Builder: ImJanice/PhillixJanice_YT<br>Inspiration & Tutorial: bilibili-@孔同学KKK',
+                            'info': 'With building and code blocks (Code from: YT-@Bluepandaiscool)'
+                        },
+                        {
+                            'title': 'Tree House',
+                            'desc': 'Builder: ImJanice/PhillixJanice_YT<br>Inspiration & Tutorial: bilibili-@QY-kemi & YT-@polarcat22',
+                            'info': 'Building only'
+                        },
+                        {
+                            'title': 'Cherry Blossom Pond',
+                            'desc': 'Builder: ImJanice/PhillixJanice_YT<br>Inspiration & Tutorial: bilibili-@雪島べま',
+                            'info': 'Building only'
+                        },
+                    ]
+                }
+            };
+
+            // 图片数据 - 每个板块对应的图片数组
+            const imageData = {
+                0: ['img/SH-1.png', 'img/SH-2.png', 'img/SH-3.png', 'img/SH-4.png'],
+                1: ['img/PH-1.png', 'img/PH-2.png', 'img/PH-3.png', 'img/PH-4.png', 'img/PH-5.png'],
+                2: ['img/WC-1.png', 'img/WC-2.png', 'img/WC-3.png', 'img/WC-4.png'],
+                3: ['img/W-1.png', 'img/W-2.png', 'img/W-3.png', 'img/W-4.png'],
+                4: ['img/CT-1.png', 'img/CT-2.png', 'img/CT-3.png', 'img/CT-4.png', 'img/CT-5.png'],
+                5: ['img/TH-1.png', 'img/TH-2.png', 'img/TH-3.png', 'img/TH-4.png'],
+                6: ['img/CP-1.png', 'img/CP-2.png', 'img/CP-3.png', 'img/CP-4.png'] 
+            };
+            
+            // 当前图片索引
+            const currentImageIndex = [0, 0, 0, 0, 0, 0, 0];
+            
+            // 更新界面语言
+            function updateLanguage(lang) {
+                const t = translations[lang];
+                
+                // 更新主标题和副标题
+                mainTitle.textContent = t.title;
+                mainSubtitle.textContent = t.subtitle;
+                
+                // 更新下载按钮
+                downloadText.textContent = t.download;
+                downloadBtn.title = t.downloadTitle;
+                
+                // 更新通知文本
+                notification.textContent = t.notification;
+                
+                // 更新项目说明部分
+                document.getElementById('projectTitle').textContent = t.projectTitle;
+                document.getElementById('projectText1').innerHTML = t.projectText1;
+                document.getElementById('projectText2').textContent = t.projectText2;
+                document.getElementById('contactText1').textContent = t.contactText1;
+                document.getElementById('contactText2').innerHTML = t.contactText2;
+                
+                // 更新所有板块内容
+                sections.forEach((section, index) => {
+                    const title = section.querySelector('.section-title');
+                    const desc = section.querySelector('.section-desc');
+                    const info = section.querySelector('.section-info span');
+                    
+                    if (t.sections[index]) {
+                        title.textContent = t.sections[index].title;
+                        desc.innerHTML = t.sections[index].desc;
+                        info.textContent = t.sections[index].info;
+                    }
+                });
+            }
+            
+            // 为每个板块添加点击事件
+            sections.forEach((section, index) => {
+                section.addEventListener('click', function() {
+                    // 移除之前选中的板块的active类
+                    sections.forEach(s => s.classList.remove('active'));
+                    
+                    // 为当前点击的板块添加active类
+                    this.classList.add('active');
+                    
+                    // 获取对应的文件名
+                    selectedFile = this.getAttribute('data-file');
+                    
+                    // 启用下载按钮
+                    downloadBtn.classList.remove('disabled');
+                });
+                
+                // 为图片导航按钮添加事件
+                const prevBtn = section.querySelector('.img-nav.prev');
+                const nextBtn = section.querySelector('.img-nav.next');
+                const imgElement = section.querySelector('.section-img');
+                
+                prevBtn.addEventListener('click', function(e) {
+                    e.stopPropagation(); // 防止触发板块点击事件
+                    currentImageIndex[index] = (currentImageIndex[index] - 1 + imageData[index].length) % imageData[index].length;
+                    imgElement.src = imageData[index][currentImageIndex[index]];
+                });
+                
+                nextBtn.addEventListener('click', function(e) {
+                    e.stopPropagation(); // 防止触发板块点击事件
+                    currentImageIndex[index] = (currentImageIndex[index] + 1) % imageData[index].length;
+                    imgElement.src = imageData[index][currentImageIndex[index]];
+                });
+            });
+            
+            // 下载按钮点击事件
+            downloadBtn.addEventListener('click', function() {
+                if (this.classList.contains('disabled')) {
+                    return;
+                }
+                
+                if (selectedFile) {
+                    // 显示下载通知
+                    notification.textContent = translations[currentLanguage].notification;
+                    notification.classList.add('show');
+                    
+                    // 创建并触发实际下载
+                    const link = document.createElement('a');
+                    const content = `${selectedFile} content - Download time: ${new Date().toLocaleString()}`;
+                    const blob = new Blob([content], { type: 'application/octet-stream' });
+                    link.href = URL.createObjectURL(blob);
+                    link.download = selectedFile;
+                    link.click();
+                    
+                    // 清理和重置
+                    setTimeout(() => {
+                        notification.classList.remove('show');
+                        sections.forEach(s => s.classList.remove('active'));
+                        downloadBtn.classList.add('disabled');
+                        selectedFile = null;
+                        URL.revokeObjectURL(link.href);
+                    }, 3000);
+                }
+            });
+            
+            // 语言切换功能
+            langBtn.addEventListener('click', function() {
+                if (currentLanguage === 'en') {
+                    currentLanguage = 'zh';
+                    langBtn.textContent = 'EN';
+                } else {
+                    currentLanguage = 'en';
+                    langBtn.textContent = '中文';
+                }
+                updateLanguage(currentLanguage);
+            });
+            
+            // 初始化语言
+            updateLanguage(currentLanguage);
+        });
+    </script>
+</body>
+</html>
