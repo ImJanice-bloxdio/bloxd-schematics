@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Bloxd Schematics</title>
     <style>
+        /* 原有CSS保持不变 */
         * {
             margin: 0;
             padding: 0;
@@ -294,14 +295,14 @@
             /* 添加固定高度 */
             min-height: 400px; /* 调整这个值来改变最小高度 */
             height: auto; /* 或者设置为固定高度如 500px */
-			transition: all 0.3s ease;
+            transition: all 0.3s ease;
         }
         
-		.content-area:hover {
-		    transform: translateY(-5px);
-		    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-		}
-		
+        .content-area:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+        
         .content-area h3 {
             font-size: 1.5rem;
             margin-bottom: 20px;
@@ -355,6 +356,34 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
+        }
+        
+        /* 加载指示器 */
+        .loading {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 5;
+            border-radius: 8px;
+        }
+        
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            border-top-color: #3498db;
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
         
         @media (max-width: 768px) {
@@ -560,7 +589,7 @@
                     <p id="contactText2">
                         <strong>油管:</strong> <a href="https://www.youtube.com/@PhillixJanice_YT" target="_blank">https://www.youtube.com/@PhillixJanice_YT</a><br>
                         <strong>B站(bilibili):</strong> <a href="https://space.bilibili.com/3493078547564755?spm_id_from=333.1007.0.0" target="_blank">https://space.bilibili.com/3493078547564755?spm_id_from=333.1007.0.0</a><br>
-            			<strong>微信视频号:</strong> @蓝色de许愿星吖
+                        <strong>微信视频号:</strong> @蓝色de许愿星吖
                     </p>
                 </div>
             </div>
@@ -704,6 +733,34 @@
             // 当前图片索引
             const currentImageIndex = [0, 0, 0, 0, 0, 0, 0];
             
+            // 预加载图片
+            function preloadImages() {
+                console.log("开始预加载图片...");
+                let loadedCount = 0;
+                let totalCount = 0;
+                
+                // 计算总图片数
+                Object.values(imageData).forEach(images => {
+                    totalCount += images.length;
+                });
+                
+                // 预加载所有图片
+                Object.values(imageData).forEach(images => {
+                    images.forEach(src => {
+                        const img = new Image();
+                        img.onload = function() {
+                            loadedCount++;
+                            console.log(`已加载 ${loadedCount}/${totalCount} 张图片: ${src}`);
+                        };
+                        img.onerror = function() {
+                            loadedCount++;
+                            console.warn(`加载失败: ${src}`);
+                        };
+                        img.src = src;
+                    });
+                });
+            }
+            
             // 更新界面语言
             function updateLanguage(lang) {
                 const t = translations[lang];
@@ -740,6 +797,25 @@
                 });
             }
             
+            // 显示加载指示器
+            function showLoader(imgContainer) {
+                const existingLoader = imgContainer.querySelector('.loading');
+                if (existingLoader) return;
+                
+                const loader = document.createElement('div');
+                loader.className = 'loading';
+                loader.innerHTML = '<div class="spinner"></div>';
+                imgContainer.appendChild(loader);
+            }
+            
+            // 隐藏加载指示器
+            function hideLoader(imgContainer) {
+                const loader = imgContainer.querySelector('.loading');
+                if (loader) {
+                    loader.remove();
+                }
+            }
+            
             // 为每个板块添加点击事件
             sections.forEach((section, index) => {
                 section.addEventListener('click', function() {
@@ -760,17 +836,52 @@
                 const prevBtn = section.querySelector('.img-nav.prev');
                 const nextBtn = section.querySelector('.img-nav.next');
                 const imgElement = section.querySelector('.section-img');
+                const imgContainer = section.querySelector('.section-img-container');
                 
                 prevBtn.addEventListener('click', function(e) {
                     e.stopPropagation(); // 防止触发板块点击事件
+                    
+                    // 显示加载指示器
+                    showLoader(imgContainer);
+                    
+                    // 更新索引
                     currentImageIndex[index] = (currentImageIndex[index] - 1 + imageData[index].length) % imageData[index].length;
+                    
+                    // 预加载下一张图片
+                    const nextIndex = (currentImageIndex[index] - 1 + imageData[index].length) % imageData[index].length;
+                    const nextImg = new Image();
+                    nextImg.src = imageData[index][nextIndex];
+                    
+                    // 设置新图片
                     imgElement.src = imageData[index][currentImageIndex[index]];
+                    
+                    // 图片加载完成后隐藏加载指示器
+                    imgElement.onload = function() {
+                        hideLoader(imgContainer);
+                    };
                 });
                 
                 nextBtn.addEventListener('click', function(e) {
                     e.stopPropagation(); // 防止触发板块点击事件
+                    
+                    // 显示加载指示器
+                    showLoader(imgContainer);
+                    
+                    // 更新索引
                     currentImageIndex[index] = (currentImageIndex[index] + 1) % imageData[index].length;
+                    
+                    // 预加载下一张图片
+                    const nextIndex = (currentImageIndex[index] + 1) % imageData[index].length;
+                    const nextImg = new Image();
+                    nextImg.src = imageData[index][nextIndex];
+                    
+                    // 设置新图片
                     imgElement.src = imageData[index][currentImageIndex[index]];
+                    
+                    // 图片加载完成后隐藏加载指示器
+                    imgElement.onload = function() {
+                        hideLoader(imgContainer);
+                    };
                 });
             });
             
@@ -818,6 +929,9 @@
             
             // 初始化语言
             updateLanguage(currentLanguage);
+            
+            // 预加载图片
+            preloadImages();
         });
     </script>
 </body>
