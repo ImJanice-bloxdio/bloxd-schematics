@@ -897,13 +897,18 @@
                     notification.textContent = translations[currentLanguage].notification;
                     notification.classList.add('show');
                     
-                    // 创建并触发实际下载
+                    // 直接创建下载链接，指向真实文件
                     const link = document.createElement('a');
-                    const content = `${selectedFile} content - Download time: ${new Date().toLocaleString()}`;
-                    const blob = new Blob([content], { type: 'application/octet-stream' });
-                    link.href = URL.createObjectURL(blob);
-                    link.download = selectedFile;
+                    link.href = selectedFile;
+                    
+                    // 从文件路径中提取文件名
+                    const fileName = selectedFile.split('/').pop();
+                    link.download = fileName;
+                    
+                    // 添加到页面并触发点击
+                    document.body.appendChild(link);
                     link.click();
+                    document.body.removeChild(link);
                     
                     // 清理和重置
                     setTimeout(() => {
@@ -911,7 +916,6 @@
                         sections.forEach(s => s.classList.remove('active'));
                         downloadBtn.classList.add('disabled');
                         selectedFile = null;
-                        URL.revokeObjectURL(link.href);
                     }, 3000);
                 }
             });
